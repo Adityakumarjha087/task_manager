@@ -6,7 +6,7 @@ import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "../components/ui/dialog";
-import { Users, UserPlus, Trash2, Shield, Mail } from 'lucide-react';
+import { Users, UserPlus, Trash2, Shield, Mail, Eye, EyeOff } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from "../components/ui/avatar";
 
 interface Employee {
@@ -23,6 +23,7 @@ const Employees: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newEmployee, setNewEmployee] = useState({ name: '', email: '', password: '', role: 'Employee' });
   const [error, setError] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
 
   const fetchEmployees = async () => {
     try {
@@ -120,14 +121,24 @@ const Employees: React.FC = () => {
               </div>
               <div className="space-y-2">
                 <Label htmlFor="password">Temporary Password</Label>
-                <Input
-                  id="password"
-                  type="password"
-                  required
-                  placeholder="••••••••"
-                  value={newEmployee.password}
-                  onChange={(e) => setNewEmployee({ ...newEmployee, password: e.target.value })}
-                />
+                <div className="relative">
+                  <Input
+                    id="password"
+                    type={showPassword ? "text" : "password"}
+                    required
+                    className="pr-10"
+                    placeholder="••••••••"
+                    value={newEmployee.password}
+                    onChange={(e) => setNewEmployee({ ...newEmployee, password: e.target.value })}
+                  />
+                  <button
+                    type="button"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                  </button>
+                </div>
               </div>
               <p className="text-xs text-muted-foreground mt-4 italic">
                 Note: Email must start with an uppercase letter. Admin access is automatically granted only to emails ending in <strong>@hr.com</strong>. All other emails will be registered as Employees.

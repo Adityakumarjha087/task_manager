@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
-import { LogIn, Mail, Lock, AlertCircle, FolderKanban, Sun, Moon } from 'lucide-react';
+import { LogIn, Mail, Lock, AlertCircle, FolderKanban, Sun, Moon, Eye, EyeOff } from 'lucide-react';
 import { Card, CardContent, CardFooter } from "../components/ui/card";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
@@ -13,6 +13,7 @@ const Login: React.FC = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
   const [isDarkMode, setIsDarkMode] = useState(() => document.documentElement.classList.contains('dark'));
@@ -95,13 +96,20 @@ const Login: React.FC = () => {
                     <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-primary transition-colors z-10" size={18} />
                     <Input
                       id="password"
-                      type="password"
+                      type={showPassword ? "text" : "password"}
                       required
-                      className="pl-10 bg-background/50 border-border"
+                      className="pl-10 pr-10 bg-background/50 border-border"
                       placeholder="••••••••"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                     />
+                    <button
+                      type="button"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors z-10"
+                      onClick={() => setShowPassword(!showPassword)}
+                    >
+                      {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                    </button>
                   </div>
                 </div>
               </div>
@@ -112,7 +120,7 @@ const Login: React.FC = () => {
                   <Label htmlFor="remember-me" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Remember me</Label>
                 </div>
                 <div className="text-sm">
-                  <a href="#" className="font-bold text-primary hover:text-primary/80 transition-colors">Forgot password?</a>
+                  <button type="button" onClick={() => window.alert('Please contact administrator')} className="font-bold text-primary hover:text-primary/80 transition-colors">Forgot password?</button>
                 </div>
               </div>
             </CardContent>

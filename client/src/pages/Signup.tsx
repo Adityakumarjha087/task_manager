@@ -14,6 +14,7 @@ const Signup: React.FC = () => {
   const [password, setPassword] = useState('');
   const [phone, setPhone] = useState('');
   const [gender, setGender] = useState('Male');
+  const [role, setRole] = useState('Employee');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -33,16 +34,9 @@ const Signup: React.FC = () => {
     }
   };
 
-  const validateEmail = (email: string): string | null => {
-    const prefix = email.split('@')[0];
-    if (!prefix || !/^[A-Z]/.test(prefix)) {
-      return 'Email must start with an uppercase letter (e.g., John123@hr.com)';
-    }
+  const validateEmail = (_email: string): string | null => {
     return null;
   };
-
-  const isHREmail = email.toLowerCase().endsWith('@hr.com');
-  const isHeadEmail = email.toLowerCase().endsWith('@projecthead.com');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -57,9 +51,9 @@ const Signup: React.FC = () => {
     setIsLoading(true);
 
     try {
-      const { data } = await api.post('/auth/signup', { name, email, password, phone, gender });
+      const { data } = await api.post('/auth/signup', { name, email, password, phone, gender, role });
       login(data);
-      navigate('/');
+      navigate('/dashboard');
     } catch (err: any) {
       setError(err.response?.data?.message || 'Something went wrong. Please try again.');
     } finally {
@@ -82,6 +76,35 @@ const Signup: React.FC = () => {
           </div>
           <h2 className="text-4xl font-black text-foreground tracking-tight">Join the Team</h2>
           <p className="text-muted-foreground mt-2 font-medium">Create your account to start managing tasks.</p>
+
+          {/* Role Toggle */}
+          <div className="mt-8 flex justify-center">
+            <div className="bg-muted p-1 rounded-full flex relative w-64 h-12 shadow-inner border border-border/50">
+              <div 
+                className={`absolute top-1 bottom-1 w-[calc(50%-4px)] bg-primary rounded-full shadow-lg transition-all duration-300 ease-in-out z-0 ${
+                  role === 'Project Head' ? 'translate-x-[calc(100%+4px)]' : 'translate-x-0'
+                }`}
+              />
+              <button
+                type="button"
+                onClick={() => setRole('Employee')}
+                className={`flex-1 relative z-10 text-xs font-black uppercase tracking-widest transition-colors duration-300 ${
+                  role === 'Employee' ? 'text-primary-foreground' : 'text-muted-foreground hover:text-foreground'
+                }`}
+              >
+                Employee
+              </button>
+              <button
+                type="button"
+                onClick={() => setRole('Project Head')}
+                className={`flex-1 relative z-10 text-xs font-black uppercase tracking-widest transition-colors duration-300 ${
+                  role === 'Project Head' ? 'text-primary-foreground' : 'text-muted-foreground hover:text-foreground'
+                }`}
+              >
+                Project Head
+              </button>
+            </div>
+          </div>
         </div>
 
         <Card>
@@ -117,18 +140,11 @@ const Signup: React.FC = () => {
                     type="email"
                     required
                     className="pl-10 bg-background/50 border-border"
-                    placeholder="John123@hr.com"
+                    placeholder="john@company.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                   />
                 </div>
-                {email && (
-                  <p className={`text-xs mt-1 font-medium ${isHREmail ? 'text-emerald-600' : isHeadEmail ? 'text-blue-600' : 'text-amber-600'}`}>
-                    {isHREmail 
-                      ? '✓ Registered as Admin (HR)' 
-                      : isHeadEmail ? '✓ Registered as Project Head' : '→ Registered as Employee'}
-                  </p>
-                )}
               </div>
 
               <div className="space-y-2">

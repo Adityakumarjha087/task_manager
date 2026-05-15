@@ -64,13 +64,11 @@ const Layout: React.FC = () => {
   };
 
   const navItems = [
-    { name: 'Dashboard', path: '/', icon: <LayoutDashboard className="w-5 h-5" /> },
+    { name: 'Dashboard', path: '/dashboard', icon: <LayoutDashboard className="w-5 h-5" /> },
     { name: 'Projects', path: '/projects', icon: <FolderKanban className="w-5 h-5" /> },
   ];
 
-  if (user?.role === 'Admin') {
-    navItems.push({ name: 'Employees', path: '/employees', icon: <Users className="w-5 h-5" /> });
-  }
+  navItems.push({ name: 'Team', path: '/employees', icon: <Users className="w-5 h-5" /> });
 
   return (
     <div className="flex h-screen bg-background overflow-hidden w-full text-foreground">

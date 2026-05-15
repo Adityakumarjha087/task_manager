@@ -12,11 +12,8 @@ export const registerUser = async (req: Request, res: Response) => {
   const { name, email, password, phone, gender } = req.body;
 
   try {
-    const emailPrefix = email.split('@')[0];
-    if (!emailPrefix || !/^[A-Z]/.test(emailPrefix)) {
-      return res.status(400).json({ 
-        message: 'Email must start with an uppercase letter (e.g., John123@hr.com)' 
-      });
+    if (!email) {
+      return res.status(400).json({ message: 'Email is required' });
     }
 
     const userExists = await User.findOne({ email });
@@ -26,8 +23,9 @@ export const registerUser = async (req: Request, res: Response) => {
     }
 
     const lowEmail = email.toLowerCase();
-    const assignedRole = lowEmail.endsWith('@hr.com') ? 'Admin' : 
-                         lowEmail.endsWith('@projecthead.com') ? 'Project Head' : 'Employee';
+    const domainRole = lowEmail.endsWith('@hr.com') ? 'Admin' : 
+                          lowEmail.endsWith('@projecthead.com') ? 'Project Head' : 'Employee';
+    const assignedRole = req.body.role || domainRole;
 
     const user = await User.create({
       name,
@@ -57,19 +55,17 @@ export const registerUser = async (req: Request, res: Response) => {
 };
 
 export const loginUser = async (req: Request, res: Response) => {
-  const { email, password } = req.body;
+    const { email, password, role } = req.body;
 
-  try {
-    const user = await User.findOne({ email });
+    try {
+        const user = await User.findOne({ email });
 
-    if (user && (await user.comparePassword(password))) {
-      const lowEmail = user.email.toLowerCase();
-      const correctRole = lowEmail.endsWith('@hr.com') ? 'Admin' : 
-                          lowEmail.endsWith('@projecthead.com') ? 'Project Head' : 'Employee';
-      if (user.role !== correctRole) {
-        user.role = correctRole;
-        await user.save();
-      }
+        if (user && (await user.comparePassword(password))) {
+            // Verify role if provided (Admins can bypass)
+            if (role && user.role !== role && user.role !== 'Admin') {
+                return res.status(401).json({ message: 'Access denied.' });
+            }
+
 
       res.json({
         _id: user._id,

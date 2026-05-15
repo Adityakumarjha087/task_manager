@@ -2,6 +2,9 @@ import express, { Request, Response } from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
 import connectDB from './config/db';
+import dns from 'dns';
+
+dns.setServers(['8.8.8.8', '8.8.4.4']); // Use Google DNS to bypass local DNS issues with SRV records
 import authRoutes from './routes/authRoutes';
 import projectRoutes from './routes/projectRoutes';
 import taskRoutes from './routes/taskRoutes';

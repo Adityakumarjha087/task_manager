@@ -32,6 +32,31 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setLoading(false);
   }, []);
 
+  // Inactivity Timeout (5 Minutes)
+  useEffect(() => {
+    if (!user) return;
+
+    let timeoutId: any;
+
+    const resetTimer = () => {
+      if (timeoutId) clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => {
+        logout();
+        // Optional: notify user or redirect
+      }, 5 * 60 * 1000); 
+    };
+
+    const activityEvents = ['mousemove', 'mousedown', 'keypress', 'scroll', 'touchstart'];
+    activityEvents.forEach(event => window.addEventListener(event, resetTimer));
+
+    resetTimer(); // Start timer
+
+    return () => {
+      if (timeoutId) clearTimeout(timeoutId);
+      activityEvents.forEach(event => window.removeEventListener(event, resetTimer));
+    };
+  }, [user]);
+
   const login = (userData: User) => {
     setUser(userData);
     localStorage.setItem('userInfo', JSON.stringify(userData));

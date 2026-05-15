@@ -64,92 +64,88 @@ const Employees: React.FC = () => {
     }
   };
 
-  if (user?.role !== 'Admin') {
-    return (
-      <div className="flex flex-col items-center justify-center h-[60vh] text-center space-y-4">
-        <Shield size={64} className="text-destructive/50" />
-        <h2 className="text-2xl font-bold text-foreground">Access Denied</h2>
-        <p className="text-muted-foreground max-w-md">You do not have permission to view or manage employees. Please contact your administrator.</p>
-      </div>
-    );
-  }
+
 
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500 pb-10">
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-extrabold text-foreground tracking-tight">Team Members</h1>
-          <p className="text-muted-foreground mt-1">Manage employees and their access to the system.</p>
+          <p className="text-muted-foreground mt-1">
+            {user?.role === 'Admin' || user?.role === 'Project Head' ? 'Manage team members and their access to the system.' : 'View team members and their roles in the system.'}
+          </p>
         </div>
         
-        <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-          <DialogTrigger>
-            <Button>
-              <UserPlus size={20} className="mr-2" />
-              Add Employee
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="sm:max-w-md">
-            <DialogHeader>
-              <DialogTitle>Add New Employee</DialogTitle>
-              <DialogDescription>
-                Create a new account for a team member to access the system.
-              </DialogDescription>
-            </DialogHeader>
-            {error && <div className="text-sm font-medium text-destructive bg-destructive/10 p-3 rounded-md">{error}</div>}
-            <form onSubmit={handleCreateEmployee} className="space-y-4 pt-4">
-              <div className="space-y-2">
-                <Label htmlFor="name">Full Name</Label>
-                <Input
-                  id="name"
-                  required
-                  placeholder="John Doe"
-                  value={newEmployee.name}
-                  onChange={(e) => setNewEmployee({ ...newEmployee, name: e.target.value })}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="email">Email Address</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  required
-                  placeholder="john@example.com"
-                  value={newEmployee.email}
-                  onChange={(e) => setNewEmployee({ ...newEmployee, email: e.target.value })}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="password">Temporary Password</Label>
-                <div className="relative">
+        {(user?.role === 'Admin' || user?.role === 'Project Head') && (
+          <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+            <DialogTrigger>
+              <Button>
+                <UserPlus size={20} className="mr-2" />
+                Add Member
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-md">
+              <DialogHeader>
+                <DialogTitle>Add New Member</DialogTitle>
+                <DialogDescription>
+                  Create a new account for a team member to access the system.
+                </DialogDescription>
+              </DialogHeader>
+              {error && <div className="text-sm font-medium text-destructive bg-destructive/10 p-3 rounded-md">{error}</div>}
+              <form onSubmit={handleCreateEmployee} className="space-y-4 pt-4">
+                <div className="space-y-2">
+                  <Label htmlFor="name">Full Name</Label>
                   <Input
-                    id="password"
-                    type={showPassword ? "text" : "password"}
+                    id="name"
                     required
-                    className="pr-10"
-                    placeholder="••••••••"
-                    value={newEmployee.password}
-                    onChange={(e) => setNewEmployee({ ...newEmployee, password: e.target.value })}
+                    placeholder="John Doe"
+                    value={newEmployee.name}
+                    onChange={(e) => setNewEmployee({ ...newEmployee, name: e.target.value })}
                   />
-                  <button
-                    type="button"
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
-                    onClick={() => setShowPassword(!showPassword)}
-                  >
-                    {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
-                  </button>
                 </div>
-              </div>
-              <p className="text-xs text-muted-foreground mt-4 italic">
-                Note: Email must start with an uppercase letter. Admin access is automatically granted only to emails ending in <strong>@hr.com</strong>. All other emails will be registered as Employees.
-              </p>
-              <div className="pt-4 flex justify-end space-x-2">
-                <Button variant="outline" type="button" onClick={() => setIsModalOpen(false)}>Cancel</Button>
-                <Button type="submit">Create Account</Button>
-              </div>
-            </form>
-          </DialogContent>
-        </Dialog>
+                <div className="space-y-2">
+                  <Label htmlFor="email">Email Address</Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    required
+                    placeholder="john@example.com"
+                    value={newEmployee.email}
+                    onChange={(e) => setNewEmployee({ ...newEmployee, email: e.target.value })}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="password">Temporary Password</Label>
+                  <div className="relative">
+                    <Input
+                      id="password"
+                      type={showPassword ? "text" : "password"}
+                      required
+                      className="pr-10"
+                      placeholder="••••••••"
+                      value={newEmployee.password}
+                      onChange={(e) => setNewEmployee({ ...newEmployee, password: e.target.value })}
+                    />
+                    <button
+                      type="button"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                      onClick={() => setShowPassword(!showPassword)}
+                    >
+                      {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                    </button>
+                  </div>
+                </div>
+                <p className="text-xs text-muted-foreground mt-4 italic">
+                  Note: Admin access is automatically granted only to emails ending in <strong>@hr.com</strong>. Project Head access for <strong>@projecthead.com</strong>.
+                </p>
+                <div className="pt-4 flex justify-end space-x-2">
+                  <Button variant="outline" type="button" onClick={() => setIsModalOpen(false)}>Cancel</Button>
+                  <Button type="submit">Create Account</Button>
+                </div>
+              </form>
+            </DialogContent>
+          </Dialog>
+        )}
       </div>
 
       {loading ? (
@@ -178,13 +174,19 @@ const Employees: React.FC = () => {
                 </div>
                 <div className="mt-6 flex items-center justify-between pt-4 border-t border-border/50">
                   <div className="flex items-center">
-                    <Shield size={16} className={`mr-2 ${employee.role === 'Admin' ? 'text-purple-500' : 'text-blue-500'}`} />
+                    <Shield size={16} className={`mr-2 ${
+                      employee.role === 'Admin' ? 'text-purple-500' : 
+                      employee.role === 'Project Head' ? 'text-amber-500' : 
+                      'text-blue-500'
+                    }`} />
                     <span className="text-sm font-semibold">{employee.role || 'Employee'}</span>
                   </div>
-                  <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive hover:bg-destructive/10" onClick={() => handleDeleteEmployee(employee._id)}>
-                    <Trash2 size={16} className="mr-2" />
-                    Remove
-                  </Button>
+                  {(user?.role === 'Admin' || user?.role === 'Project Head') && (
+                    <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive hover:bg-destructive/10" onClick={() => handleDeleteEmployee(employee._id)}>
+                      <Trash2 size={16} className="mr-2" />
+                      Remove
+                    </Button>
+                  )}
                 </div>
               </CardContent>
             </Card>
@@ -193,7 +195,7 @@ const Employees: React.FC = () => {
           {employees.length === 0 && (
             <div className="col-span-full text-center py-12 bg-muted/20 rounded-xl border border-dashed border-border">
               <Users size={48} className="mx-auto text-muted-foreground/50 mb-4" />
-              <p className="text-muted-foreground font-medium">No other employees found in the system.</p>
+              <p className="text-muted-foreground font-medium">No team members found in the system.</p>
             </div>
           )}
         </div>

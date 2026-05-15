@@ -13,7 +13,7 @@ export const searchUsers = async (req: AuthRequest, res: Response) => {
     : {};
 
   try {
-    const users = await User.find({ ...keyword, _id: { $ne: req.user?._id as any } }).select('-password');
+    const users = await User.find(keyword).select('-password');
     res.json(users);
   } catch (error) {
     res.status(500).json({ message: (error as Error).message });
@@ -54,12 +54,7 @@ export const updateProfile = async (req: AuthRequest, res: Response) => {
 export const createEmployee = async (req: AuthRequest, res: Response) => {
   const { name, email, password } = req.body;
   try {
-    const emailPrefix = email.split('@')[0];
-    if (!emailPrefix || !/^[A-Z]/.test(emailPrefix)) {
-      return res.status(400).json({ 
-        message: 'Email must start with an uppercase letter (e.g., John123@hr.com)' 
-      });
-    }
+
 
     const userExists = await User.findOne({ email });
     if (userExists) {
@@ -67,8 +62,9 @@ export const createEmployee = async (req: AuthRequest, res: Response) => {
     }
 
     const lowEmail = email.toLowerCase();
-    const assignedRole = lowEmail.endsWith('@hr.com') ? 'Admin' : 
-                         lowEmail.endsWith('@projecthead.com') ? 'Project Head' : 'Employee';
+    const domainRole = lowEmail.endsWith('@hr.com') ? 'Admin' : 
+                          lowEmail.endsWith('@projecthead.com') ? 'Project Head' : 'Employee';
+    const assignedRole = req.body.role || domainRole;
 
     const user = await User.create({
       name,

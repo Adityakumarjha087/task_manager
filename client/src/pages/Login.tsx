@@ -11,6 +11,7 @@ import { Label } from "../components/ui/label";
 const Login: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [role, setRole] = useState('Employee'); // Purely for UI/Role distinction if needed
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -36,9 +37,9 @@ const Login: React.FC = () => {
     setIsLoading(true);
 
     try {
-      const { data } = await api.post('/auth/login', { email, password });
+      const { data } = await api.post('/auth/login', { email, password, role });
       login(data);
-      navigate('/');
+      navigate('/dashboard');
     } catch (err: any) {
       setError(err.response?.data?.message || 'Invalid credentials. Please try again.');
     } finally {
@@ -61,6 +62,35 @@ const Login: React.FC = () => {
           </div>
           <h2 className="text-4xl font-black text-foreground tracking-tight">Welcome Back</h2>
           <p className="text-muted-foreground mt-2 font-medium">Log in to manage your team's tasks.</p>
+
+          {/* Role Toggle */}
+          <div className="mt-8 flex justify-center">
+            <div className="bg-muted p-1 rounded-full flex relative w-64 h-12 shadow-inner border border-border/50">
+              <div 
+                className={`absolute top-1 bottom-1 w-[calc(50%-4px)] bg-primary rounded-full shadow-lg transition-all duration-300 ease-in-out z-0 ${
+                  role === 'Project Head' ? 'translate-x-[calc(100%+4px)]' : 'translate-x-0'
+                }`}
+              />
+              <button
+                type="button"
+                onClick={() => setRole('Employee')}
+                className={`flex-1 relative z-10 text-xs font-black uppercase tracking-widest transition-colors duration-300 ${
+                  role === 'Employee' ? 'text-primary-foreground' : 'text-muted-foreground hover:text-foreground'
+                }`}
+              >
+                Employee
+              </button>
+              <button
+                type="button"
+                onClick={() => setRole('Project Head')}
+                className={`flex-1 relative z-10 text-xs font-black uppercase tracking-widest transition-colors duration-300 ${
+                  role === 'Project Head' ? 'text-primary-foreground' : 'text-muted-foreground hover:text-foreground'
+                }`}
+              >
+                Project Head
+              </button>
+            </div>
+          </div>
         </div>
 
         <Card>

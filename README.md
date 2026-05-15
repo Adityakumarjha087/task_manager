@@ -1,135 +1,103 @@
-# Team Task Management Web Application
+# TaskFlow - Team Task Management System
 
-A Full-Stack web application designed to help teams collaborate, track projects, and manage tasks efficiently. It features a secure role-based access control (RBAC) system to ensure data privacy between Administrators and standard Employees.
+A premium Full-Stack web application designed for high-performance teams to collaborate, track projects, and manage tasks with a state-of-the-art dark theme and intuitive role-based controls.
 
-## Features
+## 👥 Role-Based Access Control (RBAC)
 
-### Role-Based Access Control
-The application automatically assigns roles upon registration based on the email domain:
-- **Admins** (Emails ending in `@hr.com`): Full administrative privileges.
-- **Project Heads** (Emails ending in `@projecthead.com`): Privileged project management access.
-- **Employees** (All other emails): Standard access.
+The application features a secure, multi-tier permission system. Roles can be selected during signup or determined automatically by email domain.
 
-### Admin Features
-- **User Management**: Add, remove, and manage employees securely.
-- **Project Creation**: Create new projects and set deadlines.
-- **Team Allocation**: Assign employees to specific projects as members.
-- **Task Assignment**: Create, edit, and assign tasks to specific project members.
-- **Global Dashboard**: Monitor platform-wide statistics including total tasks, overdue tasks, and completion rates.
+### 🏢 HR / Administrator (Full Control)
+- **Email**: `hr@hr.com` | **Password**: `password123`
+- **Capabilities**:
+  - Full visibility into **ALL** projects and tasks across the organization.
+  - Comprehensive **User Management**: Add, remove, and manage all employee accounts.
+  - **Project Ownership**: Create new projects, set deadlines, and manage global team allocation.
+  - **Global Analytics**: Access real-time statistics on team productivity and project health.
 
-### Employee Features
-- **Isolated Workspace**: Employees only see projects they are assigned to.
-- **Task Management**: View assigned tasks and update statuses (`To Do` -> `In Progress` -> `Done`).
-- **Restricted Access**: Cannot access admin routes (like `/employees`), modify other user's tasks, or tamper with project configurations.
+### 👔 Project Head
+- **Domain**: `@projecthead.com` (or selected via toggle)
+- **Capabilities**:
+  - Manage projects explicitly assigned to them by HR.
+  - Create and assign tasks within their specific projects.
+  - Add or remove employees from their project teams.
+  - Monitor project-specific deadlines and completion rates.
 
-### Profile Management
-- Secure JWT-based authentication.
-- View and edit personal details (Name, Email, Phone Number, Gender).
-- Personalized avatars dynamically generated based on the user's name.
+### 💻 Employee
+- **Capabilities**:
+  - Isolated workspace: Only view projects and tasks assigned to them.
+  - Update task statuses (`To Do` → `In Progress` → `Done`).
+  - Manage personal profile and track individual deadlines.
 
 ---
 
-## Technology Stack
+## ✨ Features
+
+- **Premium UI/UX**: Stunning dark-mode interface with glassmorphism effects and smooth micro-animations.
+- **Animated Auth Flow**: Interactive Login/Signup with role-switching "swipe" toggles.
+- **Dynamic Dashboard**: Real-time KPI tracking for tasks, projects, and team members.
+- **Smart Data Management**: Comprehensive task filtering, status updates, and member management.
+- **Local Development Suite**: Includes Docker configuration for instant database setup.
+
+---
+
+## 🛠️ Technology Stack
 
 **Frontend:**
-- **React 19** (Vite)
-- **TypeScript** for type safety
-- **Tailwind CSS** & **shadcn/ui** for modern, responsive styling
-- **React Router v7** for routing
+- **React 19** (Vite) & **TypeScript**
+- **Tailwind CSS** & **shadcn/ui**
+- **Lucide React** for premium iconography
+- **Framer Motion** for interactive animations
 
 **Backend:**
 - **Node.js** & **Express**
-- **MongoDB** & **Mongoose** (Database)
-- **JWT** & **bcryptjs** (Authentication & Security)
+- **MongoDB** & **Mongoose**
+- **JWT** (JSON Web Tokens) for secure session management
+- **bcryptjs** for industrial-grade password hashing
 
 ---
 
-## Local Setup & Installation
+## 🚀 Quick Start (Local Setup)
 
-### Prerequisites
-- Node.js (v18+ recommended)
-- MongoDB Atlas URI (or local MongoDB instance)
+### 1. Prerequisites
+- **Node.js** (v18+)
+- **MongoDB** (Local instance or Atlas URI)
 
-### 1. Clone & Install Dependencies
-First, install the dependencies for both the `client` and `server`.
-
-```bash
-# Install Server Dependencies
-cd server
-npm install
-
-# Install Client Dependencies
-cd ../client
-npm install
-```
-
-### 2. Environment Variables
-Create a `.env` file in the **server** directory with the following variables:
+### 2. Environment Setup
+Create a `.env` file in the **server** directory:
 ```env
 PORT=5000
 MONGODB_URI=your_mongodb_connection_string
-JWT_SECRET=your_super_secret_jwt_key
+JWT_SECRET=your_secret_key
 ```
 
-### 3. Run the Application
+### 3. Install & Run
+```bash
+# Setup Backend
+cd server
+npm install
+npm run dev
 
-**Start the Backend Server:**
+# Setup Frontend
+cd ../client
+npm install
+npm run dev
+```
+
+### 4. Seed Sample Data
+To populate the app with 30 users and 15 projects:
 ```bash
 cd server
-npm run dev
-# Runs on http://localhost:5000
-```
-
-**Start the Frontend Client:**
-```bash
-cd client
-npm run dev
-# Runs on http://localhost:5173
+npm run seed
 ```
 
 ---
 
-## Project Structure
-
-```text
-task-management/
-├── client/                 # React Frontend
-│   ├── src/
-│   │   ├── components/     # Reusable UI components (shadcn)
-│   │   ├── context/        # React Context (Auth)
-│   │   ├── pages/          # Full page views (Dashboard, Projects, etc.)
-│   │   └── services/       # Axios API configurations
-│   └── package.json
-└── server/                 # Node/Express Backend
-    ├── src/
-    │   ├── controllers/    # API endpoint logic
-    │   ├── middleware/     # JWT Auth & Admin guards
-    │   ├── models/         # Mongoose Schemas (User, Project, Task)
-    │   ├── routes/         # Express routing definitions
-    │   └── index.ts        # Server entry point
-    └── package.json
-```
+## 🔑 Demo Credentials
+| Role | Email | Password |
+| :--- | :--- | :--- |
+| **HR (Admin)** | `hr@hr.com` | `password123` |
+| **Project Head** | `head1@projecthead.com` | `password123` |
+| **Employee** | `employee1@gmail.com` | `password123` |
 
 ---
 
-## Core API Endpoints
-
-### Authentication
-- `POST /api/auth/register` - Register a new user
-- `POST /api/auth/login` - Authenticate user & get token
-
-### Projects
-- `GET /api/projects` - Get all projects (filtered by role)
-- `POST /api/projects` - Create a new project (Admin only)
-- `GET /api/projects/:id` - Get project details
-- `PUT /api/projects/:id/members` - Add/remove team members
-
-### Tasks
-- `GET /api/tasks/project/:projectId` - Get all tasks for a project
-- `POST /api/tasks` - Create a task
-- `PUT /api/tasks/:id` - Update task (Status, assignees, etc.)
-- `DELETE /api/tasks/:id` - Delete a task
-
-### Users & Dashboard
-- `GET /api/users` - List all employees (Admin only)
-- `GET /api/dashboard/stats` - Get aggregated dashboard metrics

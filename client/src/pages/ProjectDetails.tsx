@@ -107,6 +107,12 @@ const ProjectDetails: React.FC = () => {
     fetchData();
   }, [id]);
 
+  useEffect(() => {
+    if (isMemberModalOpen) {
+      handleSearchUsers('');
+    }
+  }, [isMemberModalOpen]);
+
   const handleCreateTask = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
@@ -166,11 +172,10 @@ const ProjectDetails: React.FC = () => {
     }
   };
 
-  const handleSearchUsers = async () => {
-    if (!searchQuery.trim()) return;
+  const handleSearchUsers = async (query = searchQuery) => {
     setIsSearching(true);
     try {
-      const { data } = await api.get(`/users?search=${searchQuery}`);
+      const { data } = await api.get(`/users?search=${query}`);
       setSearchResults(data);
     } catch (err) {
       console.error('Search failed', err);
@@ -279,27 +284,29 @@ const ProjectDetails: React.FC = () => {
                    <form onSubmit={handleUpdateProject} className="space-y-4 pt-4">
                      <div className="space-y-2">
                        <Label>Project Name</Label>
-                       <Input 
-                         value={editProjectData.name}
-                         onChange={(e) => setEditProjectData({...editProjectData, name: e.target.value})}
-                         required
-                       />
+                        <Input 
+                          className="bg-muted/30 border-muted-foreground/20 focus:border-primary transition-all"
+                          value={editProjectData.name}
+                          onChange={(e) => setEditProjectData({...editProjectData, name: e.target.value})}
+                          required
+                        />
                      </div>
                      <div className="space-y-2">
                        <Label>Description</Label>
-                       <textarea 
-                         className="flex min-h-[100px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring resize-none"
-                         value={editProjectData.description}
-                         onChange={(e) => setEditProjectData({...editProjectData, description: e.target.value})}
-                       />
+                        <textarea 
+                          className="flex min-h-[100px] w-full rounded-md border border-muted-foreground/20 bg-muted/30 px-3 py-2 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring resize-none focus:border-primary transition-all"
+                          value={editProjectData.description}
+                          onChange={(e) => setEditProjectData({...editProjectData, description: e.target.value})}
+                        />
                      </div>
                      <div className="space-y-2">
                        <Label>Deadline</Label>
-                       <Input 
-                         type="date"
-                         value={editProjectData.deadline}
-                         onChange={(e) => setEditProjectData({...editProjectData, deadline: e.target.value})}
-                       />
+                        <Input 
+                          type="date"
+                          className="bg-muted/30 border-muted-foreground/20 focus:border-primary transition-all"
+                          value={editProjectData.deadline}
+                          onChange={(e) => setEditProjectData({...editProjectData, deadline: e.target.value})}
+                        />
                      </div>
                      <div className="flex justify-between items-center pt-4">
                        <Button variant="destructive" type="button" onClick={handleDeleteProject}>
@@ -342,7 +349,7 @@ const ProjectDetails: React.FC = () => {
                          />
                        </div>
                        <Button 
-                         onClick={handleSearchUsers}
+                         onClick={() => handleSearchUsers()}
                          disabled={isSearching}
                        >
                          {isSearching ? '...' : 'Search'}
@@ -430,44 +437,46 @@ const ProjectDetails: React.FC = () => {
                    <form onSubmit={handleCreateTask} className="space-y-6 pt-4">
                      <div className="space-y-2">
                        <Label>Task Title</Label>
-                       <Input
-                         type="text"
-                         required
-                         autoFocus
-                         placeholder="e.g. Design Landing Page"
-                         value={newTask.title}
-                         onChange={(e) => setNewTask({ ...newTask, title: e.target.value })}
-                       />
+                        <Input
+                          type="text"
+                          required
+                          autoFocus
+                          placeholder="e.g. Design Landing Page"
+                          className="bg-muted/30 border-muted-foreground/20 focus:border-primary transition-all"
+                          value={newTask.title}
+                          onChange={(e) => setNewTask({ ...newTask, title: e.target.value })}
+                        />
                      </div>
                      <div className="space-y-2">
                        <Label>Description</Label>
-                       <textarea
-                         className="flex min-h-[100px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring resize-none"
-                         placeholder="Describe the task in detail..."
-                         value={newTask.description}
-                         onChange={(e) => setNewTask({ ...newTask, description: e.target.value })}
-                       />
+                        <textarea
+                          className="flex min-h-[100px] w-full rounded-md border border-muted-foreground/20 bg-muted/30 px-3 py-2 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring resize-none focus:border-primary transition-all"
+                          placeholder="Describe the task in detail..."
+                          value={newTask.description}
+                          onChange={(e) => setNewTask({ ...newTask, description: e.target.value })}
+                        />
                      </div>
                      <div className="grid grid-cols-2 gap-4">
                        <div className="space-y-2">
                          <Label>Priority</Label>
                          <select
-                           className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                           className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
                            value={newTask.priority}
                            onChange={(e) => setNewTask({ ...newTask, priority: e.target.value })}
                          >
-                           <option value="Low">Low</option>
-                           <option value="Medium">Medium</option>
-                           <option value="High">High</option>
+                           <option value="Low" className="text-foreground bg-background">Low</option>
+                           <option value="Medium" className="text-foreground bg-background">Medium</option>
+                           <option value="High" className="text-foreground bg-background">High</option>
                          </select>
                        </div>
                        <div className="space-y-2">
                          <Label>Due Date</Label>
-                         <Input
-                           type="date"
-                           value={newTask.dueDate}
-                           onChange={(e) => setNewTask({ ...newTask, dueDate: e.target.value })}
-                         />
+                          <Input
+                            type="date"
+                            className="bg-muted/30 border-muted-foreground/20 focus:border-primary transition-all"
+                            value={newTask.dueDate}
+                            onChange={(e) => setNewTask({ ...newTask, dueDate: e.target.value })}
+                          />
                        </div>
                      </div>
                      <div className="space-y-2">
